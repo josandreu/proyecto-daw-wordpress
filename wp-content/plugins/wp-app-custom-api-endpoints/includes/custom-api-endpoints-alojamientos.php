@@ -1,6 +1,6 @@
 <?php
 
-function wp_appi_get_alojamientos(): array {
+function wp_api_get_alojamientos(): array {
     $args = [
       'numberposts' => 9999,
       'post_type' => 'alojamiento'
@@ -33,7 +33,7 @@ function wp_appi_get_alojamientos(): array {
     return $data;
 }
 
-function wp_appi_get_alojamiento( $slug ): array {
+function wp_api_get_alojamiento( $slug ): array {
     $args = [
         'name' => $slug['slug'],
         'post_type' => 'alojamiento'
@@ -62,15 +62,52 @@ function wp_appi_get_alojamiento( $slug ): array {
     return $data;
 }
 
+function wp_api_create_alojamientos( $alojamiento ): string {
+    $parameters = $alojamiento->get_params();
+
+    $nuevo_alojamiento = [
+        'post_title' => $parameters['post_title'],
+        'post_name' => strtolower(str_replace(" ","-", $parameters['post_title'])),
+        'post_type' => 'alojamiento',
+        'post_content' => empty($parameters['comentario']) ? 'Sin comentarios' : $parameters['comentario'],
+        'post_status' => 'publish'
+    ];
+
+    $alojamiento_id = wp_insert_post( $nuevo_alojamiento );
+
+    // save ACF fields
+    update_field('nombre', !empty($parameters['nombre']) ? ($parameters['nombre']) : $parameters['post_title'] , $alojamiento_id);
+    update_field('direccion', !empty($parameters['direccion']) ? ($parameters['direccion']) : 'No hay dirección' , $alojamiento_id);
+    update_field('localidad', !empty($parameters['localidad']) ? ($parameters['localidad']) : 'No se ha registrado la localidad' , $alojamiento_id);
+    update_field('coordenadas', !empty($parameters['coordenadas']) ? ($parameters['coordenadas']) : ' ' , $alojamiento_id);
+    update_field('tipo', !empty($parameters['tipo']) ? ($parameters['tipo']) : 'Hotel' , $alojamiento_id);
+    update_field('puntuacion', !empty($parameters['puntuacion']) ? ($parameters['puntuacion']) : 'Sin puntuación' , $alojamiento_id);
+    update_field('foto', !empty($parameters['foto']) ? ($parameters['foto']) : 'https://source.unsplash.com/800x600/?hotel' , $alojamiento_id);
+    update_field('web', !empty($parameters['web']) ? ($parameters['web']) : 'Sin sitio web' , $alojamiento_id);
+    update_field('como_llegar', !empty($parameters['como-llegar']) ? ($parameters['como-llegar']) : ' ' , $alojamiento_id);
+
+    if( $alojamiento_id != 0 ) {
+        return 'Ok';
+    }
+    return 'KO';
+}
+
 add_action( 'rest_api_init' , function() {
-    register_rest_route( 'wp/v2/', 'alojamientos', [
+    register_rest_route( 'api/v1/', 'alojamientos', [
             'methods' => 'GET',
-            'callback' => 'wp_appi_get_alojamientos',
+            'callback' => 'wp_api_get_alojamientos',
         ]
     );
 
-    register_rest_route( 'wp/v2/', 'alojamientos/(?P<slug>[a-zA-Z0-9-]+)', array(
+    register_rest_route( 'api/v1/', 'alojamientos/(?P<slug>[a-zA-Z0-9-]+)', array(
         'methods' => 'GET',
-        'callback' => 'wp_appi_get_alojamiento',
-    ) );
+        'callback' => 'wp_api_get_alojamiento',
+        )
+    );
+
+    register_rest_route( 'api/v1/' , 'crear-alojamiento', [
+            'methods' => 'POST',
+            'callback' => 'wp_api_create_alojamientos',
+        ]
+    );
 });
