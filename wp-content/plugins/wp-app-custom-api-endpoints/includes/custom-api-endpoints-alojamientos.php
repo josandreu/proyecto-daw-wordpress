@@ -82,9 +82,23 @@ function wp_api_create_alojamientos( $alojamiento ): string {
     update_field('coordenadas', !empty($parameters['coordenadas']) ? ($parameters['coordenadas']) : ' ' , $alojamiento_id);
     update_field('tipo', !empty($parameters['tipo']) ? ($parameters['tipo']) : 'Hotel' , $alojamiento_id);
     update_field('puntuacion', !empty($parameters['puntuacion']) ? ($parameters['puntuacion']) : 'Sin puntuación' , $alojamiento_id);
-    update_field('foto', !empty($parameters['foto']) ? ($parameters['foto']) : 'https://source.unsplash.com/800x600/?hotel' , $alojamiento_id);
     update_field('web', !empty($parameters['web']) ? ($parameters['web']) : 'Sin sitio web' , $alojamiento_id);
     update_field('como_llegar', !empty($parameters['como-llegar']) ? ($parameters['como-llegar']) : ' ' , $alojamiento_id);
+
+    if(empty($parameters['foto'])) {
+        // call to API and save the file
+        $media_file_url = save_get_media_file();
+    } else {
+        // save the url passed in the form
+        $media_file_url = save_get_media_file($parameters['foto']);
+    }
+
+    // if is not a image
+    if($media_file_url === false) {
+        $media_file_url = save_get_media_file();
+    }
+    update_field('foto', $media_file_url, $alojamiento_id);
+
 
     if( $alojamiento_id != 0 ) {
         return 'Ok';
