@@ -18,6 +18,7 @@ function wp_api_get_alojamientos(): array {
         $data[$i]['title'] = $alojamiento->post_title;
         $data[$i]['comentarios'] = $alojamiento->post_content;
         $data[$i]['slug'] = $alojamiento->post_name;
+        $data['author'] = $alojamiento->post_author;
         $data[$i]['nombre'] = get_field('nombre', $id);
         $data[$i]['direccion'] = get_field('direccion', $id);
         $data[$i]['localidad'] = get_field('localidad', $id);
@@ -49,6 +50,7 @@ function wp_api_get_alojamiento( $slug ): array {
     $data['title'] = $alojamiento[0]->post_title;
     $data['comentarios'] = $alojamiento[0]->post_content;
     $data['slug'] = $alojamiento[0]->post_name;
+    $data['author'] = $alojamiento[0]->post_author;
     $data['nombre'] = get_field('nombre', $id);
     $data['direccion'] = get_field('direccion', $id);
     $data['localidad'] = get_field('localidad', $id);
@@ -59,6 +61,41 @@ function wp_api_get_alojamiento( $slug ): array {
     $data['web'] = get_field('web', $id);
     $data['como_llegar'] = get_field('como_llegar', $id);
 
+    return $data;
+}
+
+function wp_api_get_alojamientos_author( $slug ): array {
+    $args = [
+        'numberposts' => 9999,
+        'post_type' => 'alojamiento',
+        'author' => $slug['id'],
+    ];
+
+    $data = [];
+    $i = 0;
+
+    $alojamientos = get_posts( $args );
+    write_log($alojamientos);
+
+    foreach( $alojamientos as $alojamiento) {
+        $id = $alojamiento->ID;
+        $data[$i]['id'] = $alojamiento->ID;
+        $data[$i]['title'] = $alojamiento->post_title;
+        $data[$i]['comentarios'] = $alojamiento->post_content;
+        $data[$i]['slug'] = $alojamiento->post_name;
+        $data['author'] = $alojamiento->post_author;
+        $data[$i]['nombre'] = get_field('nombre', $id);
+        $data[$i]['direccion'] = get_field('direccion', $id);
+        $data[$i]['localidad'] = get_field('localidad', $id);
+        $data[$i]['coordenadas'] = get_field('coordenadas', $id);
+        $data[$i]['tipo'] = get_field('tipo', $id);
+        $data[$i]['puntuacion'] = get_field('puntuacion', $id);
+        $data[$i]['foto'] = get_field('foto', $id);
+        $data[$i]['web'] = get_field('web', $id);
+        $data[$i]['como_llegar'] = get_field('como_llegar', $id);
+
+        $i++;
+    }
     return $data;
 }
 
@@ -117,6 +154,12 @@ add_action( 'rest_api_init' , function() {
         'methods' => 'GET',
         'callback' => 'wp_api_get_alojamiento',
         )
+    );
+
+    register_rest_route( 'api/v1/', 'alojamientos/author/(?P<id>\d+)', [
+            'methods' => 'GET',
+            'callback' => 'wp_api_get_alojamientos_author',
+        ]
     );
 
     register_rest_route( 'api/v1/' , 'crear-alojamiento', [
