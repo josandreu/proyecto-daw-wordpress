@@ -18,7 +18,6 @@ function wp_api_get_alojamientos(): array {
         $data[$i]['title'] = $alojamiento->post_title;
         $data[$i]['comentarios'] = $alojamiento->post_content;
         $data[$i]['slug'] = $alojamiento->post_name;
-        $data['author'] = $alojamiento->post_author;
         $data[$i]['nombre'] = get_field('nombre', $id);
         $data[$i]['direccion'] = get_field('direccion', $id);
         $data[$i]['localidad'] = get_field('localidad', $id);
@@ -50,7 +49,6 @@ function wp_api_get_alojamiento( $slug ): array {
     $data['title'] = $alojamiento[0]->post_title;
     $data['comentarios'] = $alojamiento[0]->post_content;
     $data['slug'] = $alojamiento[0]->post_name;
-    $data['author'] = $alojamiento[0]->post_author;
     $data['nombre'] = get_field('nombre', $id);
     $data['direccion'] = get_field('direccion', $id);
     $data['localidad'] = get_field('localidad', $id);
@@ -83,7 +81,6 @@ function wp_api_get_alojamientos_author( $slug ): array {
         $data[$i]['title'] = $alojamiento->post_title;
         $data[$i]['comentarios'] = $alojamiento->post_content;
         $data[$i]['slug'] = $alojamiento->post_name;
-        $data['author'] = $alojamiento->post_author;
         $data[$i]['nombre'] = get_field('nombre', $id);
         $data[$i]['direccion'] = get_field('direccion', $id);
         $data[$i]['localidad'] = get_field('localidad', $id);
