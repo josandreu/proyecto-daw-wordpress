@@ -125,5 +125,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	define( 'ABSPATH', __DIR__ . '/' );
 }
 
+define('JWT_AUTH_SECRET_KEY', 'nj_LC#vyb&P!;Lg-k`}C#j}y~#f|?hwjII&3})aw88P=^.y7H4,fdL:bcITw(MAu');
+define('JWT_AUTH_CORS_ENABLE', true);
+
 /** Sets up WordPress vars and included files. */
 require_once ABSPATH . 'wp-settings.php';
