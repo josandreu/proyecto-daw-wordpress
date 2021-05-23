@@ -6,6 +6,7 @@ define('THEME_VERSION', time());
 add_action('init', 'handle_preflight');
 function handle_preflight() {
     $origin = get_http_origin();
+    var_dump($origin);
     if ($origin === 'https://www.proyecto-wp-api.tk') {
         header("Access-Control-Allow-Origin: " . HEADLESS_FRONTEND_URL);
         header("Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE");
