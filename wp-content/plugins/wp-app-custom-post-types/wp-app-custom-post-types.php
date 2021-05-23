@@ -25,6 +25,7 @@ if(!class_exists('Wp_App_Custom_Post_Types')) {
         public function __construct() {
             require dirname(__FILE__ ) . '/includes/helpers.php';
             require dirname( __FILE__ ) . '/includes/custom-post-type-alojamientos.php';
+            require dirname( __FILE__ ) . '/includes/custom-fields-cpt-alojamientos.php';
         }
     }
     $Wp_App_Custom_Post_Types = new Wp_App_Custom_Post_Types();
