@@ -140,6 +140,15 @@ function wp_api_create_alojamientos( $alojamiento ): string {
     return 'KO';
 }
 
+function wp_api_delete_alojamiento( $alojamiento ): string {
+    $params = $alojamiento->get_params();
+    $alojamiento_id = $params['id'];
+
+    wp_delete_post((int)$alojamiento_id, true);
+
+    return 'Alojamiento eliminado';
+}
+
 add_action( 'rest_api_init' , function() {
     register_rest_route( 'api/v1/', 'alojamientos', [
             'methods' => 'GET',
@@ -162,6 +171,12 @@ add_action( 'rest_api_init' , function() {
     register_rest_route( 'api/v1/' , 'crear-alojamiento', [
             'methods' => 'POST',
             'callback' => 'wp_api_create_alojamientos',
+        ]
+    );
+
+    register_rest_route( 'api/v1/' , 'eliminar-alojamiento/(?P<id>\d+)', [
+            'methods' => 'DELETE',
+            'callback' => 'wp_api_delete_alojamiento',
         ]
     );
 });
